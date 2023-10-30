@@ -9,8 +9,6 @@ import {
   selectAddPostIsOpen,
   SetScreen,
   SetPosts,
-  // selectAddStoryIsOpen,
-  // SetStories,
 } from "./features/appSlice";
 import { useTransition, animated } from "react-spring";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
@@ -19,25 +17,17 @@ import Profile from "./components/Profile";
 import Feed from "./components/Feed";
 import Login from "./components/Login";
 import AddPost from "./components/AddPost";
-// import AddStory from "./components/AddStory";
-// import StoryBoard from "./Pages/StoryBoard";
 
 function App() {
   const dispatch = useDispatch();
   const [user] = useAuthState(auth);
   const addPostIsOpen = useSelector(selectAddPostIsOpen);
-  // const addStoryIsOpen = useSelector(selectAddStoryIsOpen);
 
   const addPostTransition = useTransition(addPostIsOpen, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
   });
-  // const addStoryTransition = useTransition(addStoryIsOpen, {
-  //   from: { opacity: 0 },
-  //   enter: { opacity: 1 },
-  //   leave: { opacity: 0 },
-  // });
 
   useEffect(() => {
     window.addEventListener("resize", checkScreenSize);
@@ -73,21 +63,6 @@ function App() {
       unsubscribe();
     };
   });
-  // useEffect(() => {
-  //   const unsubscribe = onSnapshot(
-  //     query(collection(db, "stories"), orderBy("timestamp", "desc")),
-  //     (snapshot) => {
-  //       dispatch(
-  //         SetStories({
-  //           stories: snapshot.docs,
-  //         })
-  //       );
-  //     }
-  //   );
-  //   return () => {
-  //     unsubscribe();
-  //   };
-  // }, [dispatch]);
 
   return (
     <AppContainer>
@@ -104,9 +79,6 @@ function App() {
               <Route path="/profile" element={<Profile />} />
             </Routes>
           </BodyWrapper>
-          {/* <Routes>
-            <Route path="/stories" element={<StoryBoard />} />
-          </Routes> */}
           {addPostTransition(
             (styles, item) =>
               item && (
@@ -115,14 +87,6 @@ function App() {
                 </animated.div>
               )
           )}
-          {/* {addStoryTransition(
-            (styles, item) =>
-              item && (
-                <animated.div style={styles}>
-                  <AddStory />
-                </animated.div>
-              )
-          )} */}
         </>
       )}
     </AppContainer>
