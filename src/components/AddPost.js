@@ -20,11 +20,10 @@ import {  TextField  } from '@mui/material';
 function AddPost() {
   const [user] = useAuthState(auth);
   const filePickerRef = useRef(null);
-  // const [caption, setCaption] = useState("");
   const [facility, setFacility] = useState(null);
   const [sport, setSport] = useState(null);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState("2023-12-01");
+  const [time, setTime] = useState("17:00");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -85,17 +84,7 @@ function AddPost() {
       time: time,
       timestamp: serverTimestamp(),
     });
-    // setCaption("");
-    const imageRef = ref(storage, `posts/${docRef.id}/image`);
-
-    await uploadString(imageRef, selectedFile, "data_url").then(
-      async (snapshot) => {
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "posts", docRef.id), {
-          image: downloadURL,
-        });
-      }
-    );
+    
 
     dispatch(
       setAddPostModal({
@@ -126,32 +115,6 @@ function AddPost() {
     <AddPostWrapper>
       <ModalContentWrapper ref={modalContentRef}>
         <ContentContainer>
-          {selectedFile ? (
-            <CameraIcon
-            onClick={() => filePickerRef.current.click()}
-            style={{
-              color: "white",
-              padding: 15,
-              borderRadius: 9999,
-              background: "green",
-              cursor: "pointer",
-              height: 30,
-            }}
-          />
-          ) : (
-            <CameraIcon
-              onClick={() => filePickerRef.current.click()}
-              style={{
-                color: "#e53e3e",
-                padding: 15,
-                borderRadius: 9999,
-                background: "#fed7d7",
-                cursor: "pointer",
-                height: 30,
-              }}
-            />
-          )}
-
           {/* add photo */}
           <p
             style={{
@@ -163,7 +126,7 @@ function AddPost() {
               border: 0,
             }}
           >
-            Select a photo
+            Plan a Pick-up Game
           </p>
           {/* facility */}
           <div className="custom-select">
@@ -180,6 +143,27 @@ function AddPost() {
                     onClick={() => handleOptionClick(option)}
                   >
                     {option}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <br />
+          {/* sport */}
+          <div className="custom-select">
+            <div className="default-option">Sport</div>
+            <div className="select-header" onClick={toggleDropdownSport}>
+              {sport}
+            </div>
+            {isOpenSport && (
+              <div className="options">
+                {sportOptions.map((sportOption) => (
+                  <div
+                    key={sportOption}
+                    className="option"
+                    onClick={() => handleOptionClickSport(sportOption)}
+                  >
+                    {sportOption}
                   </div>
                 ))}
               </div>
@@ -212,27 +196,7 @@ function AddPost() {
           }}
           sx={{ marginBottom: 2 }}
           />
-          {/* sport */}
-          <div className="custom-select">
-            <div className="default-option">Sport</div>
-            <div className="select-header" onClick={toggleDropdownSport}>
-              {sport}
-            </div>
-            {isOpenSport && (
-              <div className="sportOptions">
-                {sportOptions.map((sportOption) => (
-                  <div
-                    key={sportOption}
-                    className="sportOption"
-                    onClick={() => handleOptionClickSport(sportOption)}
-                  >
-                    {sportOption}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <br />
+          
           {/* caption */}
           {/* <input
             placeholder="Enter caption"
@@ -264,9 +228,9 @@ function AddPost() {
           ) : (
             <button
               type="submit"
-              disabled={!selectedFile}
+              disabled={!facility || !sport}
               onClick={uploadPost}
-              className={selectedFile ? "selected" : "notSelected"}
+              className={(facility && sport) ? "selected" : "notSelected"}
             >
               POST
             </button>
