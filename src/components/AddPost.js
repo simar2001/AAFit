@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { CameraIcon } from "@heroicons/react/outline";
+import './CustomSelect.css';
 import {
   addDoc,
   doc,
@@ -14,15 +15,31 @@ import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import { useDispatch } from "react-redux";
 import { setAddPostModal } from "../features/appSlice";
 import Spinner from "react-spinkit";
+import {  TextField  } from '@mui/material';
 
 function AddPost() {
   const [user] = useAuthState(auth);
   const filePickerRef = useRef(null);
   const [caption, setCaption] = useState("");
+  const [facility, setFacility] = useState(null);
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const modalContentRef = useRef();
+
+  const options = ['IM Building', 'CCRB'];
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleOptionClick = (option) => {
+    setFacility(option);
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     const handler = (event) => {
@@ -49,6 +66,9 @@ function AddPost() {
       userId: user.uid,
       caption: caption,
       profileImg: user.photoURL,
+      facility: facility,
+      date: date,
+      time: time,
       timestamp: serverTimestamp(),
     });
     setCaption("");
@@ -83,22 +103,27 @@ function AddPost() {
     };
   };
 
+  const facilityChange = (e) => {
+    e.preventDefault();
+    setFacility(e.target.value)
+  };
+
   return (
     <AddPostWrapper>
       <ModalContentWrapper ref={modalContentRef}>
         <ContentContainer>
           {selectedFile ? (
-            <img
-              src={selectedFile}
-              alt=""
-              style={{
-                objectFit: "contain",
-                cursor: "pointer",
-                maxHeight: 200,
-                width: "100%",
-                borderRadius: 5,
-              }}
-            />
+            <CameraIcon
+            onClick={() => filePickerRef.current.click()}
+            style={{
+              color: "white",
+              padding: 15,
+              borderRadius: 9999,
+              background: "green",
+              cursor: "pointer",
+              height: 30,
+            }}
+          />
           ) : (
             <CameraIcon
               onClick={() => filePickerRef.current.click()}
@@ -126,6 +151,53 @@ function AddPost() {
           >
             Select a photo
           </p>
+            {/* facility */}
+          <div className="custom-select">
+            <div className="default-option">Facility</div>
+            <div className="select-header" onClick={toggleDropdown}>
+              {facility}
+            </div>
+            {isOpen && (
+              <div className="options">
+                {options.map((option) => (
+                  <div
+                    key={option}
+                    className="option"
+                    onClick={() => handleOptionClick(option)}
+                  >
+                    {option}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <br />
+          {/* date */}
+          <TextField
+          fullWidth
+          label="Date"
+          type="date"
+          name="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          InputLabelProps={{
+              shrink: true,
+          }}
+          sx={{ marginBottom: 2 }}
+          />
+          {/* time */}
+          <TextField
+          fullWidth
+          label="Time"
+          type="time"
+          name="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          InputLabelProps={{
+              shrink: true,
+          }}
+          sx={{ marginBottom: 2 }}
+          />
           {/* caption */}
           <input
             placeholder="Enter caption"
@@ -139,7 +211,7 @@ function AddPost() {
               fontSize: 15,
             }}
           />
-          {/* hidden Input */}
+          {/* hidden input */}
           <input
             ref={filePickerRef}
             type="file"
