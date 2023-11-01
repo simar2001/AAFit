@@ -99,6 +99,7 @@ function Post({ post, user }) {
   const deletePost = () => {
     deleteDoc(doc(db, "posts", post.id));
   };
+
   return (
     <PostWrap>
       <HeaderContainer>
@@ -153,6 +154,7 @@ function Post({ post, user }) {
         {/* <BookmarkIcon className="Nav__Icon" /> */}
       </PostOptions>
       {/* LIKES */}
+
       <p style={{ paddingLeft: 10 }}>
         {likes.length > 0 && (
           <strong>
@@ -163,8 +165,9 @@ function Post({ post, user }) {
       {/* DETAILS & CAPTION */}
       <p style={{ display: "flex", gap: 10, marginTop: 5, padding: 10 }}>
         <strong>{post.data().username}</strong>
-        <span>{post.data().caption}</span>
+        <span>{post.data().caption}</span> 
       </p>
+      <p style={{ paddingLeft: 10 }}>{post.data().facility} {post.data().time} {post.data().date}</p>
       {/* COMMENTs */}
       {comments.length !== 0 && (
         <CommentsContainer>
