@@ -20,21 +20,34 @@ import {  TextField  } from '@mui/material';
 function AddPost() {
   const [user] = useAuthState(auth);
   const filePickerRef = useRef(null);
-  const [caption, setCaption] = useState("");
+  // const [caption, setCaption] = useState("");
   const [facility, setFacility] = useState(null);
+  const [sport, setSport] = useState(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenSport, setIsOpenSport] = useState(false);
   const dispatch = useDispatch();
   const modalContentRef = useRef();
 
   const options = ['IM Building', 'CCRB'];
+  const sportOptions = ['Basketball'];
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  const toggleDropdownSport = () => {
+    setIsOpenSport(!isOpenSport);
+  };
+
+  const handleOptionClickSport = (option) => {
+    setSport(option);
+    setIsOpenSport(false);
+  };
+
 
   const handleOptionClick = (option) => {
     setFacility(option);
@@ -64,14 +77,15 @@ function AddPost() {
     const docRef = await addDoc(collection(db, "posts"), {
       username: user.displayName,
       userId: user.uid,
-      caption: caption,
+      // caption: caption,
       profileImg: user.photoURL,
       facility: facility,
+      sport: sport,
       date: date,
       time: time,
       timestamp: serverTimestamp(),
     });
-    setCaption("");
+    // setCaption("");
     const imageRef = ref(storage, `posts/${docRef.id}/image`);
 
     await uploadString(imageRef, selectedFile, "data_url").then(
@@ -103,10 +117,10 @@ function AddPost() {
     };
   };
 
-  const facilityChange = (e) => {
-    e.preventDefault();
-    setFacility(e.target.value)
-  };
+  // const facilityChange = (e) => {
+  //   e.preventDefault();
+  //   setFacility(e.target.value)
+  // };
 
   return (
     <AddPostWrapper>
@@ -151,7 +165,7 @@ function AddPost() {
           >
             Select a photo
           </p>
-            {/* facility */}
+          {/* facility */}
           <div className="custom-select">
             <div className="default-option">Facility</div>
             <div className="select-header" onClick={toggleDropdown}>
@@ -198,8 +212,29 @@ function AddPost() {
           }}
           sx={{ marginBottom: 2 }}
           />
+          {/* sport */}
+          <div className="custom-select">
+            <div className="default-option">Sport</div>
+            <div className="select-header" onClick={toggleDropdownSport}>
+              {sport}
+            </div>
+            {isOpenSport && (
+              <div className="sportOptions">
+                {sportOptions.map((sportOption) => (
+                  <div
+                    key={sportOption}
+                    className="sportOption"
+                    onClick={() => handleOptionClickSport(sportOption)}
+                  >
+                    {sportOption}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <br />
           {/* caption */}
-          <input
+          {/* <input
             placeholder="Enter caption"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
@@ -210,7 +245,7 @@ function AddPost() {
               border: 0,
               fontSize: 15,
             }}
-          />
+          /> */}
           {/* hidden input */}
           <input
             ref={filePickerRef}

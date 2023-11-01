@@ -130,6 +130,10 @@ function Post({ post, user }) {
           </DotsOptions>
         )}
       </HeaderContainer>
+      <p>{post.data().facility}</p>
+      <p>{post.data().sport}</p>
+      <p>{moment(post.data().date, "YYYY-MM-DD").format("ddd MMMM D YYYY")}</p>
+      <p>@  {moment(post.data().time, "HH:mm").format("h:mmA")}</p>
       {/* POST PHOTO */}
       <PostCoverPhoto src={post.data().image} />
       {/* POST OPTIONS */}
@@ -162,12 +166,10 @@ function Post({ post, user }) {
           </strong>
         )}
       </p>
-      {/* DETAILS & CAPTION */}
+      {/* DETAILS & CAPTION
       <p style={{ display: "flex", gap: 10, marginTop: 5, padding: 10 }}>
         <strong>{post.data().username}</strong>
-        <span>{post.data().caption}</span> 
-      </p>
-      <p style={{ paddingLeft: 10 }}>{post.data().facility} {post.data().time} {post.data().date}</p>
+      </p> */}
       {/* COMMENTs */}
       {comments.length !== 0 && (
         <CommentsContainer>
