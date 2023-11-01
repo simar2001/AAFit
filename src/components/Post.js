@@ -130,12 +130,24 @@ function Post({ post, user }) {
           </DotsOptions>
         )}
       </HeaderContainer>
-      <p>{post.data().facility}</p>
-      <p>{post.data().sport}</p>
-      <p>{moment(post.data().date, "YYYY-MM-DD").format("ddd MMMM D YYYY")}</p>
-      <p>@  {moment(post.data().time, "HH:mm").format("h:mmA")}</p>
-      {/* POST PHOTO */}
-      <PostCoverPhoto src={post.data().image} />
+      <ContentContainer>
+        <div className="info">
+          <strong>Location:</strong>
+          <p>{post.data().facility}</p>
+        </div>
+        <div className="info">
+          <strong>Sport:</strong>
+          <p>{post.data().sport}</p>
+        </div>
+        <div className="info">
+          <strong>Date:</strong>
+          <p>{moment(post.data().date, "YYYY-MM-DD").format("ddd, MMM D, YYYY")}</p>
+        </div>
+        <div className="info">
+          <strong>Time:</strong>
+          <p>{moment(post.data().time, "HH:mm").format("h:mmA")}</p>
+        </div>
+      </ContentContainer>
       {/* POST OPTIONS */}
       <PostOptions>
         <div style={{ display: "flex", gap: 15 }}>
@@ -158,7 +170,6 @@ function Post({ post, user }) {
         {/* <BookmarkIcon className="Nav__Icon" /> */}
       </PostOptions>
       {/* LIKES */}
-
       <p style={{ paddingLeft: 10 }}>
         {likes.length > 0 && (
           <strong>
@@ -166,11 +177,6 @@ function Post({ post, user }) {
           </strong>
         )}
       </p>
-      {/* DETAILS & CAPTION
-      <p style={{ display: "flex", gap: 10, marginTop: 5, padding: 10 }}>
-        <strong>{post.data().username}</strong>
-      </p> */}
-      {/* COMMENTs */}
       {comments.length !== 0 && (
         <CommentsContainer>
           {comments?.map((comment) => (
@@ -235,13 +241,15 @@ const HeaderContainer = styled.div`
   gap: 10px;
   margin-bottom: 20px;
   padding: 10px;
+
   > img {
     object-fit: contain;
     height: 40px;
     width: 40px;
-    border-radius: 9999px;
+    border-radius: 50%; /* Similar to Tailwind's rounded-full class */
     cursor: pointer;
   }
+
   > p {
     flex: 1;
     font-size: 15px;
@@ -355,5 +363,29 @@ const AddCommentContainer = styled.div`
   > div > form > button {
     display: none;
     cursor: pointer;
+  }
+`;
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Increased padding for better spacing */
+
+  p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+    font-weight: 600; /* Apply bold font weight to the last paragraph for emphasis */
+  }
+
+  .info {
+    display: flex;
+    align-items: center; /* Align label and value vertically */
+    gap: 10px;
   }
 `;
