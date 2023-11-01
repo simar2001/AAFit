@@ -1,29 +1,26 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { CameraIcon } from "@heroicons/react/outline";
 import './CustomSelect.css';
 import {
   addDoc,
-  doc,
-  updateDoc,
   collection,
   serverTimestamp,
 } from "firebase/firestore";
-import { db, auth, storage } from "../firebase";
+import { db, auth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ref, getDownloadURL, uploadString } from "firebase/storage";
 import { useDispatch } from "react-redux";
 import { setAddPostModal } from "../features/appSlice";
 import Spinner from "react-spinkit";
 import {  TextField  } from '@mui/material';
+import moment from "moment";
 
 function AddPost() {
   const [user] = useAuthState(auth);
   const filePickerRef = useRef(null);
   const [facility, setFacility] = useState(null);
   const [sport, setSport] = useState(null);
-  const [date, setDate] = useState("2023-12-01");
-  const [time, setTime] = useState("17:00");
+  const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [time, setTime] = useState(moment().format('HH:mm'));
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -270,7 +267,7 @@ const ContentContainer = styled.div`
   > button {
     font-weight: 600;
     width: 60%;
-    padding: 10px;
+    padding: 5px;
     cursor: pointer;
     margin-top: 5px;
     border: none;

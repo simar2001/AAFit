@@ -274,10 +274,6 @@ const DotsOptions = styled.ul`
   }
 `;
 
-const PostCoverPhoto = styled.img`
-  object-fit: contain;
-  width: 100%;
-`;
 const PostOptions = styled.div`
   display: flex;
   justify-content: space-between;
