@@ -5,6 +5,7 @@ import {
   UserCircleIcon,
   XIcon,
 } from "@heroicons/react/outline";
+import { useSelector } from "react-redux";
 import { CheckCircleOutline } from "@mui/icons-material";
 import { CheckCircle } from "@mui/icons-material";
 import { MdSentimentVerySatisfied } from "react-icons/md";
@@ -24,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useDispatch } from "react-redux";
-import { SetSelectedProfile } from "../features/appSlice";
+import { SetSelectedProfile, SelectSearchTerms } from "../features/appSlice";
 import moment from "moment";
 
 function Post({ post, user }) {
@@ -35,6 +36,7 @@ function Post({ post, user }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const searchTerms = useSelector(SelectSearchTerms);
 
   useEffect(() => {
     onSnapshot(
@@ -100,135 +102,141 @@ function Post({ post, user }) {
     deleteDoc(doc(db, "posts", post.id));
   };
 
-  return (
-    <PostWrap>
-      <HeaderContainer>
-        <img src={post.data().profileImg} alt="" onClick={visitProfile} />
-        <p onClick={visitProfile}>{post.data().username}</p>
-        {!isOpen ? (
-          <DotsHorizontalIcon
-            onClick={() => setIsOpen(!isOpen)}
-            style={{ width: 24, color: "gray", cursor: "pointer" }}
-          />
-        ) : (
-          <XIcon
-            onClick={() => setIsOpen(!isOpen)}
-            style={{ width: 18, color: "black", cursor: "pointer" }}
-          />
-        )}
 
-        {isOpen && (
-          <DotsOptions>
-            <li onClick={visitProfile}>
-              <UserCircleIcon className="Icon" /> View profile
-            </li>
-            {post.data().userId === user.uid && (
-              <li onClick={deletePost} style={{ color: "rgb(239 68 68)" }}>
-                <TrashIcon className="Icon" /> Delete
-              </li>
-            )}
-          </DotsOptions>
-        )}
-      </HeaderContainer>
-      <ContentContainer>
-        <div className="info">
-          <strong>Location:</strong>
-          <p>{post.data().facility}</p>
-        </div>
-        <div className="info">
-          <strong>Sport:</strong>
-          <p>{post.data().sport}</p>
-        </div>
-        <div className="info">
-          <strong>Date:</strong>
-          <p>{moment(post.data().date, "YYYY-MM-DD").format("ddd, MMM D, YYYY")}</p>
-        </div>
-        <div className="info">
-          <strong>Time:</strong>
-          <p>{moment(post.data().time, "HH:mm").format("h:mmA")}</p>
-        </div>
-        <div className="info">
-          <strong>Description:</strong>
-          <p>{post.data().description}</p>
-        </div>
-      </ContentContainer>
-      {/* POST OPTIONS */}
-      <PostOptions>
-        <div style={{ display: "flex", gap: 15 }}>
-          {hasLiked ? (
-            <CheckCircle
-              className="Nav__Icon"
-              onClick={likePost}
-              style={{ paddingLeft: 10, color: "#33B864" }}
+  if(searchTerms && (!searchTerms.facility || post.data().facility === searchTerms.facility) && (!searchTerms.sport || post.data().sport === searchTerms.sport) && (!searchTerms.date || post.data().date === searchTerms.date) && (!searchTerms.time || post.data().time === searchTerms.time)) {
+    return (
+      <PostWrap>
+        <HeaderContainer>
+          <img src={post.data().profileImg} alt="" onClick={visitProfile} />
+          <p onClick={visitProfile}>{post.data().username}</p>
+          {!isOpen ? (
+            <DotsHorizontalIcon
+              onClick={() => setIsOpen(!isOpen)}
+              style={{ width: 24, color: "gray", cursor: "pointer" }}
             />
           ) : (
-            <CheckCircleOutline
-              className="Nav__Icon"
-              onClick={likePost}
-              style={{ paddingLeft: 10 }}
+            <XIcon
+              onClick={() => setIsOpen(!isOpen)}
+              style={{ width: 18, color: "black", cursor: "pointer" }}
             />
           )}
-          {/* <ChatIcon className="Nav__Icon" />
-          <PaperAirplaneIcon className="Nav__Icon" /> */}
-        </div>
-        {/* <BookmarkIcon className="Nav__Icon" /> */}
-      </PostOptions>
-      {/* LIKES */}
-      <p style={{ paddingLeft: 10 }}>
-        {likes.length > 0 && (
-          <strong>
-            {likes.length} {likes.length > 1 ? "RSVP" : "RSVP"}
-          </strong>
-        )}
-      </p>
-      {comments.length !== 0 && (
-        <CommentsContainer>
-          {comments?.map((comment) => (
-            <CommentWrapper key={comment.id}>
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <img src={comment.data().profileImg} alt="" />
-                <h5>
-                  <strong>{comment.data().username}</strong>
-                </h5>
-                <p>{comment.data().comment}</p>
-              </div>
 
-              {comment && (
-                <p style={{ fontSize: 10, color: "gray" }}>
-                  {moment(comment.data().timestamp?.toDate()).fromNow()}
-                </p>
+          {isOpen && (
+            <DotsOptions>
+              <li onClick={visitProfile}>
+                <UserCircleIcon className="Icon" /> View profile
+              </li>
+              {post.data().userId === user.uid && (
+                <li onClick={deletePost} style={{ color: "rgb(239 68 68)" }}>
+                  <TrashIcon className="Icon" /> Delete
+                </li>
               )}
-            </CommentWrapper>
-          ))}
-        </CommentsContainer>
-      )}
-      {post && (
-        <div style={{ padding: 10, color: "gray", fontSize: 12 }}>
-          <p> {moment(post.data().timestamp?.toDate()).fromNow()}</p>
-        </div>
-      )}
-      {/* ADD COMMENT */}
-      <AddCommentContainer>
-        <div>
-          <MdSentimentVerySatisfied style={{ height: 30 }} />
-          <form onSubmit={addComment}>
-            <input
-              value={comment}
-              type="text"
-              placeholder="Add comment"
-              onChange={(e) => {
-                setComment(e.target.value);
-              }}
-            />
-            <button type="submit">Send</button>
-          </form>
-        </div>
-        <h4 style={{ cursor: "pointer" }} onClick={addComment}>
-          Post
-        </h4>
-      </AddCommentContainer>
-    </PostWrap>
-  );
+            </DotsOptions>
+          )}
+        </HeaderContainer>
+        <ContentContainer>
+          <div className="info">
+            <strong>Location:</strong>
+            <p>{post.data().facility}</p>
+          </div>
+          <div className="info">
+            <strong>Sport:</strong>
+            <p>{post.data().sport}</p>
+          </div>
+          <div className="info">
+            <strong>Date:</strong>
+            <p>{moment(post.data().date, "YYYY-MM-DD").format("ddd, MMM D, YYYY")}</p>
+          </div>
+          <div className="info">
+            <strong>Time:</strong>
+            <p>{moment(post.data().time, "HH:mm").format("h:mmA")}</p>
+          </div>
+          <div className="info">
+            <strong>Description:</strong>
+            <p>{post.data().description}</p>
+          </div>
+        </ContentContainer>
+        {/* POST OPTIONS */}
+        <PostOptions>
+          <div style={{ display: "flex", gap: 15 }}>
+            {hasLiked ? (
+              <CheckCircle
+                className="Nav__Icon"
+                onClick={likePost}
+                style={{ paddingLeft: 10, color: "#33B864" }}
+              />
+            ) : (
+              <CheckCircleOutline
+                className="Nav__Icon"
+                onClick={likePost}
+                style={{ paddingLeft: 10 }}
+              />
+            )}
+            {/* <ChatIcon className="Nav__Icon" />
+            <PaperAirplaneIcon className="Nav__Icon" /> */}
+          </div>
+          {/* <BookmarkIcon className="Nav__Icon" /> */}
+        </PostOptions>
+        {/* LIKES */}
+        <p style={{ paddingLeft: 10 }}>
+          {likes.length > 0 && (
+            <strong>
+              {likes.length} {likes.length > 1 ? "RSVP" : "RSVP"}
+            </strong>
+          )}
+        </p>
+        {comments.length !== 0 && (
+          <CommentsContainer>
+            {comments?.map((comment) => (
+              <CommentWrapper key={comment.id}>
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <img src={comment.data().profileImg} alt="" />
+                  <h5>
+                    <strong>{comment.data().username}</strong>
+                  </h5>
+                  <p>{comment.data().comment}</p>
+                </div>
+
+                {comment && (
+                  <p style={{ fontSize: 10, color: "gray" }}>
+                    {moment(comment.data().timestamp?.toDate()).fromNow()}
+                  </p>
+                )}
+              </CommentWrapper>
+            ))}
+          </CommentsContainer>
+        )}
+        {post && (
+          <div style={{ padding: 10, color: "gray", fontSize: 12 }}>
+            <p> {moment(post.data().timestamp?.toDate()).fromNow()}</p>
+          </div>
+        )}
+        {/* ADD COMMENT */}
+        <AddCommentContainer>
+          <div>
+            <MdSentimentVerySatisfied style={{ height: 30 }} />
+            <form onSubmit={addComment}>
+              <input
+                value={comment}
+                type="text"
+                placeholder="Add comment"
+                onChange={(e) => {
+                  setComment(e.target.value);
+                }}
+              />
+              <button type="submit">Send</button>
+            </form>
+          </div>
+          <h4 style={{ cursor: "pointer" }} onClick={addComment}>
+            Post
+          </h4>
+        </AddCommentContainer>
+      </PostWrap>
+    );
+  }
+  return (
+    <div />
+  )
 }
 
 export default Post;
