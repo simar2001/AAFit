@@ -147,6 +147,10 @@ function Post({ post, user }) {
           <strong>Time:</strong>
           <p>{moment(post.data().time, "HH:mm").format("h:mmA")}</p>
         </div>
+        <div className="info">
+          <strong>Description:</strong>
+          <p>{post.data().description}</p>
+        </div>
       </ContentContainer>
       {/* POST OPTIONS */}
       <PostOptions>

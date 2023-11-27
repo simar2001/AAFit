@@ -19,6 +19,7 @@ function AddPost() {
   const filePickerRef = useRef(null);
   const [facility, setFacility] = useState(null);
   const [sport, setSport] = useState(null);
+  const [description, setDescription] = useState(null);
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
   const [time, setTime] = useState(moment().format('HH:mm'));
   const [selectedFile, setSelectedFile] = useState(null);
@@ -79,6 +80,7 @@ function AddPost() {
       sport: sport,
       date: date,
       time: time,
+      description: description,
       timestamp: serverTimestamp(),
     });
     
@@ -167,6 +169,19 @@ function AddPost() {
             )}
           </div>
           <br />
+          {/* description */}
+          <TextField
+          fullWidth
+          label="Description"
+          type="text"
+          name="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          InputLabelProps={{
+              shrink: true,
+          }}
+          sx={{ marginBottom: 2 }}
+          />
           {/* date */}
           <TextField
           fullWidth
