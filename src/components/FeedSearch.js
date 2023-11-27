@@ -9,19 +9,17 @@ import {
 import { db, auth } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useDispatch } from "react-redux";
-import { setAddPostModal } from "../features/appSlice";
+import { setAddSearchModal, SetSearchTerms } from "../features/appSlice";
 import Spinner from "react-spinkit";
 import {  TextField  } from '@mui/material';
 import moment from "moment";
 
-function AddPost() {
+function FeedSearch() {
   const [user] = useAuthState(auth);
-  const filePickerRef = useRef(null);
   const [facility, setFacility] = useState(null);
   const [sport, setSport] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
-  const [time, setTime] = useState(moment().format('HH:mm'));
+  const [date, setDate] = useState(null);
+  const [time, setTime] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenSport, setIsOpenSport] = useState(false);
@@ -50,12 +48,26 @@ function AddPost() {
     setIsOpen(false);
   };
 
+  const applySearch = () => {
+    console.log("Time: ", time);
+    dispatch(
+        SetSearchTerms({
+          searchTerms: {facility: facility, sport: sport, date: date, time: time}
+        })
+      );
+    dispatch(
+        setAddSearchModal({
+          addPostIsOpen: false,
+        })
+    );
+  }
+
   useEffect(() => {
     const handler = (event) => {
       if (!modalContentRef.current.contains(event.target)) {
         dispatch(
-          setAddPostModal({
-            addPostIsOpen: false,
+          setAddSearchModal({
+            addSearchIsOpen: false,
           })
         );
       }
@@ -65,39 +77,6 @@ function AddPost() {
       document.removeEventListener("mousedown", handler);
     };
   });
-
-  const uploadPost = async () => {
-    if (loading) return;
-    setLoading(true);
-
-    const docRef = await addDoc(collection(db, "posts"), {
-      username: user.displayName,
-      userId: user.uid,
-      // caption: caption,
-      profileImg: user.photoURL,
-      facility: facility,
-      sport: sport,
-      date: date,
-      time: time,
-      description: description,
-      timestamp: serverTimestamp(),
-    });
-    
-
-    dispatch(
-      setAddPostModal({
-        addPostIsOpen: false,
-      })
-    );
-    setLoading(false);
-  };
-
-  
-
-  // const facilityChange = (e) => {
-  //   e.preventDefault();
-  //   setFacility(e.target.value)
-  // };
 
   return (
     <AddPostWrapper>
@@ -114,7 +93,7 @@ function AddPost() {
               border: 0,
             }}
           >
-            Plan a Pick-up Game
+            Search for a Game
           </p>
           {/* facility */}
           <div className="custom-select">
@@ -158,19 +137,6 @@ function AddPost() {
             )}
           </div>
           <br />
-          {/* description */}
-          <TextField
-          fullWidth
-          label="Description"
-          type="text"
-          name="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          InputLabelProps={{
-              shrink: true,
-          }}
-          sx={{ marginBottom: 2 }}
-          />
           {/* date */}
           <TextField
           fullWidth
@@ -183,6 +149,7 @@ function AddPost() {
               shrink: true,
           }}
           sx={{ marginBottom: 2 }}
+          inputProps={{ onKeyDown: (e) => e.preventDefault() }}
           />
           {/* time */}
           <TextField
@@ -198,7 +165,6 @@ function AddPost() {
           sx={{ marginBottom: 2 }}
           />
           
-          
           {/* FINAL SUBMIT BUTTON */}
 
           {loading ? (
@@ -210,11 +176,10 @@ function AddPost() {
           ) : (
             <button
               type="submit"
-              disabled={!facility || !sport}
-              onClick={uploadPost}
-              className={(facility && sport) ? "selected" : "notSelected"}
+              onClick={applySearch}
+              className="selected"
             >
-              POST
+              SEARCH
             </button>
           )}
         </ContentContainer>
@@ -223,7 +188,7 @@ function AddPost() {
   );
 }
 
-export default AddPost;
+export default FeedSearch;
 const AddPostWrapper = styled.div`
   position: absolute;
   width: 100%;

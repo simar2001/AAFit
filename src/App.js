@@ -7,6 +7,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import {
   selectAddPostIsOpen,
+  selectAddSearchIsOpen,
   SetScreen,
   SetPosts,
 } from "./features/appSlice";
@@ -17,13 +18,21 @@ import Profile from "./components/Profile";
 import Feed from "./components/Feed";
 import Login from "./components/Login";
 import AddPost from "./components/AddPost";
+import FeedSearch from "./components/FeedSearch";
 
 function App() {
   const dispatch = useDispatch();
   const [user] = useAuthState(auth);
   const addPostIsOpen = useSelector(selectAddPostIsOpen);
+  const addSearchIsOpen = useSelector(selectAddSearchIsOpen);
 
   const addPostTransition = useTransition(addPostIsOpen, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
+
+  const addSearchTransition = useTransition(addSearchIsOpen, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
@@ -84,6 +93,14 @@ function App() {
               item && (
                 <animated.div style={styles}>
                   <AddPost />
+                </animated.div>
+              )
+          )}
+          {addSearchTransition(
+            (styles, item) =>
+              item && (
+                <animated.div style={styles}>
+                  <FeedSearch />
                 </animated.div>
               )
           )}

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import AAFitLogo from "../assets/AAFitLogo.png";
 import { HomeIcon } from "@heroicons/react/solid";
 import {
+  SearchIcon,
   PlusCircleIcon,
   UserCircleIcon,
   HomeIcon as OutlineHomeIcon,
@@ -10,6 +11,7 @@ import {
 import { useDispatch } from "react-redux";
 import {
   setAddPostModal,
+  setAddSearchModal,
   SetSelectedProfile,
 } from "../features/appSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -29,6 +31,14 @@ function Header() {
     dispatch(
       setAddPostModal({
         addPostIsOpen: true,
+      })
+    );
+  }
+
+  function toggleAddSearch() {
+    dispatch(
+      setAddSearchModal({
+        addSearchIsOpen: true,
       })
     );
   }
@@ -75,6 +85,7 @@ function Header() {
             />
           )}
           <PlusCircleIcon onClick={toggleAddPost} className="Nav__Icon" />
+          <SearchIcon onClick={toggleAddSearch} className="Nav__Icon" />
           {user ? (
             <UserAvatarContainer>
               <img
