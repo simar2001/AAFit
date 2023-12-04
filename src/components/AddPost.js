@@ -28,7 +28,7 @@ function AddPost() {
   const dispatch = useDispatch();
   const modalContentRef = useRef();
 
-  const options = ['IM Building', 'CCRB'];
+  const options = ['IM Building', 'CCRB', 'Angell Elementary School Court', 'Burns Park', 'Forsythe Park', 'Palmer Field Courts', 'Community High School Courts'];
   const sportOptions = ['Basketball'];
 
   const toggleDropdown = () => {
