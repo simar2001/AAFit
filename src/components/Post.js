@@ -103,7 +103,7 @@ function Post({ post, user }) {
   };
 
 
-  if(searchTerms && (!searchTerms.facility || post.data().facility === searchTerms.facility) && (!searchTerms.sport || post.data().sport === searchTerms.sport) && (!searchTerms.date || post.data().date === searchTerms.date) && (!searchTerms.time || post.data().time === searchTerms.time)) {
+  if( (moment(post.data().date).isSameOrAfter(moment(), 'day')) && (searchTerms && (!searchTerms.facility || post.data().facility === searchTerms.facility) && (!searchTerms.sport || post.data().sport === searchTerms.sport) && (!searchTerms.date || post.data().date === searchTerms.date) && (!searchTerms.time || post.data().time === searchTerms.time))) {
     return (
       <PostWrap>
         <HeaderContainer>
